@@ -44,4 +44,4 @@
 
 ### Блюм-Блюма-Шуба
 
-`python task1.py -g bbs -i 15621,10 -f rnd_bbs.dat`
+`python task1.py -g bbs -i 15621,10 -f bbs.dat`
