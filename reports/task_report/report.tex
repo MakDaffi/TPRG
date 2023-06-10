@@ -1,0 +1,463 @@
+\documentclass[spec, och, labwork]{shiza}
+% параметр - тип обучения - одно из значений:
+%    spec     - специальность
+%    bachelor - бакалавриат (по умолчанию)
+%    master   - магистратура
+% параметр - форма обучения - одно из значений:
+%    och   - очное (по умолчанию)
+%    zaoch - заочное
+% параметр - тип работы - одно из значений:
+%    referat    - реферат
+%    coursework - курсовая работа (по умолчанию)
+%    diploma    - дипломная работа
+%    pract      - отчет по практике
+% параметр - включение шрифта
+%    times    - включение шрифта Times New Roman (если установлен)
+%               по умолчанию выключен
+\usepackage{subfigure}
+\usepackage{tikz,pgfplots}
+\pgfplotsset{compat=1.5}
+\usepackage{float}
+
+%\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+%\titleformat{\paragraph}
+%{\normalfont\normalsize}{\theparagraph}{1em}{}
+%\titlespacing*{\paragraph}
+%{35.5pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\titleformat{\paragraph}[block]
+{\hspace{1.25cm}\normalfont}
+{\theparagraph}{1ex}{}
+\titlespacing{\paragraph}
+{0cm}{2ex plus 1ex minus .2ex}{.4ex plus.2ex}
+
+% --------------------------------------------------------------------------%
+
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{tempora}
+
+\usepackage[sort,compress]{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage[english,russian]{babel}
+
+% \usepackage[colorlinks=true]{hyperref}
+\usepackage{url}
+
+\usepackage{underscore}
+\usepackage{setspace}
+\usepackage{indentfirst} 
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{minted}
+
+\newcommand{\eqdef}{\stackrel {\rm def}{=}}
+\newcommand{\specialcell}[2][c]{%
+\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+\renewcommand\theFancyVerbLine{\small\arabic{FancyVerbLine}}
+
+\newtheorem{lem}{Лемма}
+
+\begin{document}
+
+% Кафедра (в родительном падеже)
+\chair{}
+
+% Тема работы
+\title{Теория псевдослучайных генераторов}
+
+% Курс
+\course{4}
+
+% Группа
+\group{431}
+
+% Факультет (в родительном падеже) (по умолчанию "факультета КНиИТ")
+\department{факультета КНиИТ}
+
+% Специальность/направление код - наименование
+%\napravlenie{09.03.04 "--- Программная инженерия}
+%\napravlenie{010500 "--- Математическое обеспечение и администрирование информационных систем}
+%\napravlenie{230100 "--- Информатика и вычислительная техника}
+%\napravlenie{231000 "--- Программная инженерия}
+\napravlenie{100501 "--- Компьютерная безопасность}
+
+% Для студентки. Для работы студента следующая команда не нужна.
+% \studenttitle{Студентки}
+
+% Фамилия, имя, отчество в родительном падеже
+\author{Окунькова Сергея Викторовича}
+
+% Заведующий кафедрой
+% \chtitle{} % степень, звание
+% \chname{}
+
+%Научный руководитель (для реферата преподаватель проверяющий работу)
+\satitle{доцент} %должность, степень, звание
+\saname{И. И. Слеповичев}
+
+% Руководитель практики от организации (только для практики,
+% для остальных типов работ не используется)
+% \patitle{к.ф.-м.н.}
+% \paname{С.~В.~Миронов}
+
+% Семестр (только для практики, для остальных
+% типов работ не используется)
+%\term{8}
+
+% Наименование практики (только для практики, для остальных
+% типов работ не используется)
+%\practtype{преддипломная}
+
+% Продолжительность практики (количество недель) (только для практики,
+% для остальных типов работ не используется)
+%\duration{4}
+
+% Даты начала и окончания практики (только для практики, для остальных
+% типов работ не используется)
+%\practStart{30.04.2019}
+%\practFinish{27.05.2019}
+
+% Год выполнения отчета
+\date{2023}
+
+\maketitle
+
+% Включение нумерации рисунков, формул и таблиц по разделам
+% (по умолчанию - нумерация сквозная)
+% (допускается оба вида нумерации)
+% \secNumbering
+
+%-------------------------------------------------------------------------------------------
+\tableofcontents
+
+\section{Генераторы псевдослучайных чисел}
+\subsection{Постановка задачи}
+
+Создайте программу, генерирующую псевдослучайные числа из диапазона [0, 1023] следующими алгоритмами:
+\begin{enumerate}
+  \item Линейный конгруэнтный метод;
+  \item Аддитивный метод;
+  \item Пятипараметрический метод;
+  \item Регистр сдвига с обратной связью (РСЛОС);
+  \item Нелинейная комбинация РСЛОС;
+  \item Вихрь Мерсенна;
+  \item RC4;
+  \item ГПСЧ на основе RSA;
+  \item Алгоритм Блюма-Блюма-Шуба.
+\end{enumerate}
+
+\subsection{Решение задачи}
+\begin{center}
+  \textbf{Линейный конгруэнтный метод}
+\end{center}
+\textbf{Описание алгоритма.} Последовательность ПСЧ, получаемая по формуле:
+\begin{equation}
+  X_{n + 1} = (aX_n + c) \mod m, \; n \geq 1,
+\end{equation}
+называется \textit{линейной конгруэнтной последовательностью (ЛКП)}.
+
+\textbf{Параметры запуска программы:}
+\begin{itemize}
+  \item $m > 0$, модуль;
+  \item $0 \leq a \leq m$, множитель;
+  \item $0 \leq c \leq m$, приращение;
+  \item $0 \leq X_0 \leq m$, начальное значение.
+\end{itemize}
+
+\begin{center}
+  \textbf{Аддитивный метод}
+\end{center}
+
+\textbf{Описание алгоритма.} Последовательность определяется следующим образом:
+\begin{equation}
+  X_n = (X_{n - k} + X_{n - j}) \mod m, \; j > k \geq 1.
+\end{equation}
+
+\textbf{Параметры запуска программы:}
+\begin{itemize}
+  \item $m > 0$, модуль;
+  \item $k$, младший индекс;
+  \item $j$, старший индекс;
+  \item последовательность из $j$ начальных значений.
+\end{itemize}
+
+\begin{center}
+  \textbf{Пятипараметрический метод}
+\end{center}
+
+\textbf{Описание алгоритма.} Данный метод является частным случаем РСЛОС, использует характеристический многочлен из 5 членов и позволяет генерировать последовательности $w$-битовых двоичных целых чисел в соответствии со следующей рекуррентной 
+формулой:
+
+\begin{equation}
+  X_{n + p} = X_{n + q_1} + X_{n + q_2} + X_{n + q_3} + X_n, \; n = 1, 2, 3, \dots
+\end{equation}
+
+\textbf{Параметры запуска программы:}
+\begin{itemize}
+  \item $p$;
+  \item $q_1, q_2, q_3$;
+  \item $w$;
+  \item начальное значение.
+\end{itemize}
+
+\begin{center}
+  \textbf{Регистр сдвига с обратной связью (РСЛОС)}
+\end{center}
+
+\textbf{Описание алгоритма.} Регистр сдвига с обратной линейной связью (РСЛОС) "--- регистр сдвига битовых слов, у которого входной (вдвигаемый) бит является линейной функцией остальных битов. Вдвигаемый вычисленный бит заносится в 
+ячейку с номером 0. Количество ячеек $p$ называют длиной регистра.
+
+Одна итерация алгоритма, генерирующего последовательность, состоит 
+из следующих шагов:
+\begin{enumerate}
+  \item Содержимое ячейки $p - 1$ формирует очередной бит ПСП битов.
+  \item Содержимое ячейки 0 определяется значением функции обратной связи, 
+  являющейся линейной булевой функцией с коэффициентами $a_1, \dots, a_{p - 1}$.
+  \item Содержимое каждого $i$-го бита перемещается в $(i + 1)$-й, $0 \leq i < p - 1$. 
+  \item В ячейку 0 записывается новое содержимое, вычисленное на шаге 2.
+\end{enumerate}
+
+\textbf{Параметры запуска программы:}
+\begin{itemize}
+  \item двоичное представление вектора коэффициентов;
+  \item начальное значение регистра в двоичном виде.
+\end{itemize}
+
+\begin{center}
+  \textbf{Нелинейная комбинация РСЛОС}
+\end{center}
+\textbf{Описание алгоритма.} Последовательность получается из нелинейной комбинации трёх РСЛОС следующим образом:
+\begin{equation}
+  f(x_1, x_2, x_3) = x_1 x_2 \oplus x_2 x_3 \oplus x_3
+\end{equation}
+
+\textbf{Параметры запуска программы:}
+\begin{itemize}
+  \item двоичное представление вектора коэффициентов для $R1, R2, R3$;
+  \item $x_1, x_2, x_3$ "--- двоичное представление начальных состояний регистров $R1, R2, R3$;
+  \item $w$, длина слова.
+\end{itemize}
+
+\begin{center}
+  \textbf{Вихрь Мерсенна}
+\end{center}
+\textbf{Описание алгоритма.} Метод основан на свойствах простых чисел Мерсенна и обладает рядом
+достоинств относительно многих других ГПСЧ. «Вихрь» – это преобразование, которое обеспечивает
+равномерное распределение ПСЧ.
+
+\textbf{Определение.} Числом Мерсенна называется натуральное число , определяемое формулой
+\begin{equation}
+  M_n = 2^n - 1.
+\end{equation}
+Алгоритм состоит из следующих шагов:
+\begin{enumerate}
+  \item Инициализируются значения $u, h, a$ по формуле:
+
+  $u:=(1,0,\dots,0)$ - всего $w-r$ бит, $h:=(0,1,\dots,1)$ - всего $r$ бит,
+
+  $a:=(a_{w-1}, a_{w-2}, \dots, a_0)$ - последняя строка матрицы $А$.
+  \item $X_0, X_1, \dots, X_{p-1}$ заполняются начальными значениями.
+  \item Вычисляется $Y:=(y_0, y_1, \dots, y_{w-1}):=(X^r_n | X^l_{n+1})$.
+  \item Вычисляется новое значение $X_i$:
+  
+  $X_n := X_{(n+q) \text{mod} p} \oplus (Y >> 1) \oplus a$, если младший бит $y_0=1$;
+
+  $X_n := X_{(n+q) \text{mod} p} \oplus (Y >> 1) \oplus 0$, если младший бит $y_0=0$;
+  \item Вычисляется $X_iT$:
+  
+  $Y:=X_n, Y:=Y \oplus (Y >> u), Y:=Y \oplus ((Y << s) \cdot b)$,
+
+  $Y:=Y \oplus ((Y << t) \cdot c), Z:=Y \oplus (Y >> l).$
+
+  $Z$ подается на выход, как результат.
+  \item $n:=(n+1) \text{mod } p$. Переход на шаг 3.
+\end{enumerate}
+
+Константы, используемые в алгоритме:
+\begin{itemize}
+  \item $p = 624$;
+  \item $w = 32$;
+  \item $r = 31$;
+  \item $q = 397$;
+  \item $a = 2567483615$;
+  \item $u = 11$;
+  \item $s = 7$;
+  \item $t = 15$;
+  \item $l = 18$;
+  \item $b = 2636928640$;
+  \item $c = 4022730752$.
+\end{itemize}
+
+\textbf{Параметры запуска программы:}
+\begin{itemize}
+  \item модуль;
+  \item начальное значение.
+\end{itemize}
+
+\begin{center}
+  \textbf{RC4}
+\end{center}
+\textbf{Описание алгоритма.} Алгоритм состоит из следующих шагов:
+\begin{enumerate}
+  \item Инициализация $S_i$.
+  \item $i = 0, j = 0$.
+  \item Итерация алгоритма:
+    \begin{enumerate}
+      \item $ans = 0$;
+      \item $i = (i + 1) \mod 256$;
+      \item $j = (j + S_i) \mod 256$;
+      \item $Swap(S_i, S_j)$;
+      \item $t = (S_i + S_j) \mod 256$;
+      \item $K = S_t$.
+      \item $ans = ans << 1 + K \& 1$
+      \item Если количество бит $< w$, перейти к шагу б.
+    \end{enumerate}
+\end{enumerate}
+
+\textbf{Параметры запуска программы:}
+\begin{itemize}
+  \item 256 начальных значений $S_i$,
+  \item $w$ - количество бит выходного числа.
+\end{itemize}
+
+\begin{center}
+  \textbf{ГПСЧ на основе RSA}
+\end{center}
+\textbf{Описание алгоритма.} Алгоритм состоит из следующих шагов:
+\begin{enumerate}
+  \item Инициализация чисел: $n = pq$, где $p$ и $q$ простые числа, числа $e$: $1 < e < f$, НОД($e, f$) = 1, $f = (p - 1)(q - 1)$ и числа $x_0$ из интервала $[1, n - 1]$.
+  \item \texttt{For i = 1 to w do}
+        \begin{enumerate}
+          \item $x_i \leftarrow x_{i-1}^e \mod n$.
+          \item $z_i \leftarrow $ последний значащий бит $x_i$
+        \end{enumerate}
+  \item Вернуть $z_1, \dots, z_w$.
+\end{enumerate}
+
+\textbf{Параметры запуска программы:}
+\begin{itemize}
+  \item $n$, модуль;
+  \item $e$, число;
+  \item $w$, длина слова;
+  \item $x_0$, начальное значение.
+\end{itemize}
+
+\begin{center}
+  \textbf{Алгоритм Блюм-Блюма-Шуба}
+\end{center}
+\textbf{Описание алгоритма.} Алгоритм состоит из следующих шагов:
+\begin{enumerate}
+  \item Инициализация числа: $n = 127 \cdot 131 = 16637$.
+  \item Вычислим $x_0 = x^2 \mod n$, которое будет начальным вектором.
+  \item \texttt{For i = 1 to w do}
+        \begin{enumerate}
+          \item $x_i \leftarrow x_{i-1}^2 \mod n$.
+          \item $z_i \leftarrow $ последний значащий бит $x_i$
+        \end{enumerate}
+  \item Вернуть $z_1, \dots, z_w$.
+\end{enumerate}
+
+\textbf{Параметры запуска программы:}
+\begin{itemize}
+  \item начальное значение $x$ (взаимно простое с $n$), модуль;
+\end{itemize}
+
+\section{Преобразование ПСЧ к заданному распределению}
+\subsection{Постановка задачи}
+Создать программу для преобразования последовательности ПСЧ в другую последовательность
+ПСЧ с заданным распределением:
+\begin{enumerate}
+  \item Стандартное равномерное с заданным интервалом;
+  \item Треугольное распределение;
+  \item Общее экспоненциальное распределение;
+  \item Нормальное распределение;
+  \item Гамма распределение;
+  \item Логнормальное распределение;
+  \item Логистическое распределение;
+  \item Биномиальное распределение.
+\end{enumerate}
+
+\subsection{Решение задачи}
+
+\begin{center}
+  \textbf{Стандартное равномерное с заданным интервалом}
+\end{center}
+\[ Y = bU + a \]
+
+\begin{center}
+  \textbf{Треугольное распределение}
+\end{center}
+\[ Y = a + b(U_1 + U_2 - 1) \]
+
+\begin{center}
+  \textbf{Общее экспоненциальное распределение}
+\end{center}
+\[ Y = -b \ln(U) + a \]
+
+\begin{center}
+  \textbf{Нормальное распределение}
+\end{center}
+\[ Z_1 = \mu \sigma \sqrt{-2 \ln(1 - U_1)} \cos(2 \pi U_2) \]
+\[ Z_2 = \mu \sigma \sqrt{-2 \ln(1 - U_1)} \sin(2 \pi U_2) \]
+
+\begin{center}
+  \textbf{Гамма распределение}
+\end{center}
+Алгоритм для $c = k$ ($k$ -- целое число)
+\[ Y = a - b \ln \{(1 - U_1) \dots (1 - U_k)\} \]
+
+\begin{center}
+  \textbf{Логнормальное распределение}
+\end{center}
+\[ Y = a + \exp(b - Z) \]
+
+\begin{center}
+  \textbf{Логистическое распределение}
+\end{center}
+\[ Y = a + b \ln(\frac{U}{1 - U})\]
+
+\begin{center}
+  \textbf{Биномиальное распределение}
+\end{center}
+Следующий псевдокод представляет алгоритм приведение последовательности к биномиальному распределению
+\begin{minted}[fontsize=\footnotesize]{text}
+y = binominal(x, a, b, m):
+  u = U(x)
+  s = 0
+  k = 0
+  loopstart:
+    s = s + C(k, b) + a^k * (1 - a)^(b - k)
+    if s > u:
+      y = k
+      Завершить
+    if k < b - 1:
+      k = k + 1
+      move to loopstart
+    y = b
+\end{minted}
+\newpage
+\appendix
+    \section{Код задания 1}
+    \inputminted[fontsize=\footnotesize]{text}{../../task1/task1.py}
+
+    \section{Код задания 2}
+    \inputminted[fontsize=\footnotesize]{text}{../../task2/task2.py}
+
+
+
+\end{document}

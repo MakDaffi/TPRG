@@ -243,7 +243,7 @@ if __name__ == "__main__":
     print("--!Генерация начата!--")
     ans = [next(gen) % 1024 for _ in tqdm.tqdm(range(args.amount_of_numbers))]
     print("--!Генерация завершена!--")
-    print("--!Зпись в файл...!--")
+    print("--!Запись в файл...!--")
     with open(args.filename, 'w') as fw:
         json.dump(ans, fw)
     print("--!Запись в файл завершена!--")
